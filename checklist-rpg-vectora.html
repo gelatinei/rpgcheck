@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Checklist de Conforto — Vectora</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Crimson+Pro:ital,wght@0,300;0,400;0,600;1,300;1,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #1a1410;
+    --parchment: #f5ede0;
+    --parchment-dark: #e8d9c4;
+    --border: #8b6c42;
+    --accent: #5c2d1e;
+    --accent2: #2d4a5c;
+    --red: #c0392b;
+    --yellow: #c8900a;
+    --green: #2e7d32;
+    --muted: #5a4a3a;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  @media print {
+    body { background: white; }
+    .page { box-shadow: none; border: none; margin: 0; max-width: 100%; }
+    .no-print { display: none !important; }
+  }
+  body {
+    background: #2a1f14;
+    background-image: repeating-linear-gradient(45deg,transparent,transparent 40px,rgba(0,0,0,0.05) 40px,rgba(0,0,0,0.05) 80px);
+    font-family: 'Crimson Pro', Georgia, serif;
+    min-height: 100vh;
+    padding: 24px 16px;
+    color: var(--ink);
+  }
+  .page {
+    background: var(--parchment);
+    max-width: 880px;
+    margin: 0 auto;
+    padding: 36px 44px;
+    border: 3px solid var(--border);
+    box-shadow: 0 0 0 1px var(--parchment-dark), 0 0 0 8px var(--border), 0 0 40px rgba(0,0,0,0.6), inset 0 0 80px rgba(139,108,66,0.08);
+  }
+  /* HEADER */
+  .header { text-align: center; border-bottom: 2px solid var(--border); padding-bottom: 18px; margin-bottom: 22px; }
+  h1 { font-family: 'Cinzel', serif; font-weight: 900; font-size: clamp(20px,3.8vw,32px); letter-spacing: 0.08em; color: var(--accent); line-height: 1.1; text-shadow: 1px 1px 0 rgba(255,255,255,0.5); }
+  h1 span { display: block; font-size: 0.52em; font-weight: 400; letter-spacing: 0.2em; color: var(--accent2); margin-top: 4px; }
+
+  /* FIELDS */
+  .id-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px 24px; margin-bottom: 14px; }
+  .id-grid.three { grid-template-columns: 1fr 1fr 1fr; }
+  .id-grid.four { grid-template-columns: 1fr 1fr 1fr 1fr; }
+  .field { display: flex; flex-direction: column; gap: 2px; }
+  .field label { font-family: 'Cinzel', serif; font-size: 9px; letter-spacing: 0.15em; text-transform: uppercase; color: var(--muted); }
+  .field-line { border: none; border-bottom: 1px solid var(--border); background: transparent; font-family: 'Crimson Pro', serif; font-size: 13.5px; color: var(--ink); padding: 2px 0; width: 100%; outline: none; }
+  .field-line:focus { border-bottom-color: var(--accent); }
+  .field-desc { font-size: 10px; color: var(--muted); font-style: italic; margin-top: 2px; line-height: 1.3; }
+
+  /* RATING BLOCK */
+  .rating-block { margin-bottom: 18px; }
+  .rating-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 6px;
+    margin-top: 8px;
+  }
+  .rating-card {
+    border: 1.5px solid var(--border);
+    border-radius: 4px;
+    padding: 6px 8px;
+    cursor: pointer;
+    transition: background 0.15s, border-color 0.15s;
+    position: relative;
+  }
+  .rating-card input[type=radio] { position: absolute; opacity: 0; width: 0; height: 0; }
+  .rating-card .rc-label {
+    font-family: 'Cinzel', serif;
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--accent);
+    display: block;
+    margin-bottom: 3px;
+  }
+  .rating-card .rc-desc {
+    font-size: 9.5px;
+    color: var(--muted);
+    line-height: 1.35;
+    font-style: italic;
+  }
+  .rating-card:hover { background: var(--parchment-dark); }
+  .rating-card.selected { background: var(--parchment-dark); border-color: var(--accent); }
+  .rating-card.selected .rc-label { color: var(--accent); }
+
+  /* LEGEND */
+  .legend { background: var(--parchment-dark); border: 1px solid var(--border); border-radius: 4px; padding: 10px 14px; margin-bottom: 24px; }
+  .legend-title { font-family: 'Cinzel', serif; font-size: 9px; letter-spacing: 0.2em; color: var(--muted); text-transform: uppercase; margin-bottom: 7px; }
+  .legend-row { display: flex; flex-wrap: wrap; gap: 6px 20px; align-items: center; }
+  .legend-item { display: flex; align-items: center; gap: 6px; font-size: 12.5px; color: var(--ink); }
+  .dot { width: 13px; height: 13px; border-radius: 50%; border: 2px solid currentColor; flex-shrink: 0; display: inline-flex; align-items: center; justify-content: center; }
+  .dot.g { border-color: var(--green); background: var(--green); }
+  .dot.y { border-color: var(--yellow); background: var(--yellow); }
+  .dot.r { border-color: var(--red); background: var(--red); }
+  .dot.empty-g { border-color: var(--green); background: transparent; }
+  .dot.empty-y { border-color: var(--yellow); background: transparent; }
+  .dot.empty-r { border-color: var(--red); background: transparent; }
+
+  /* SECTIONS */
+  .sections-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0 32px; }
+  .section-full { grid-column: 1 / -1; }
+  .section { margin-bottom: 20px; }
+  .section-title { font-family: 'Cinzel', serif; font-weight: 700; font-size: 12px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--accent); border-bottom: 1px solid var(--border); padding-bottom: 3px; margin-bottom: 8px; }
+  .subsection-title { font-size: 10.5px; font-style: italic; color: var(--muted); margin-bottom: 3px; margin-top: 7px; font-family: 'Crimson Pro', serif; }
+
+  /* ITEMS */
+  .item { display: flex; align-items: center; justify-content: space-between; padding: 2px 0; min-height: 21px; gap: 8px; }
+  .item-label { font-size: 12px; color: var(--ink); flex: 1; line-height: 1.3; }
+  .item-label small { display: block; font-size: 9.5px; color: var(--muted); font-style: italic; }
+  .dots-row { display: flex; gap: 4px; flex-shrink: 0; }
+  .check-dot {
+    width: 13px; height: 13px; border-radius: 50%; border: 1.5px solid;
+    cursor: pointer; transition: background 0.12s; appearance: none; -webkit-appearance: none;
+  }
+  .check-dot.g { border-color: var(--green); }
+  .check-dot.g:checked { background: var(--green); }
+  .check-dot.y { border-color: var(--yellow); }
+  .check-dot.y:checked { background: var(--yellow); }
+  .check-dot.r { border-color: var(--red); }
+  .check-dot.r:checked { background: var(--red); }
+
+  /* EXTRA TOPICS */
+  .extra-list { display: flex; flex-direction: column; gap: 4px; }
+  .extra-item { display: flex; align-items: center; gap: 8px; }
+  .extra-item input[type=text] {
+    flex: 1; border: none; border-bottom: 1px solid var(--border); background: transparent;
+    font-family: 'Crimson Pro', serif; font-size: 12px; color: var(--ink);
+    padding: 2px 0; outline: none;
+  }
+  .extra-item input[type=text]:focus { border-bottom-color: var(--accent); }
+  .btn-add-topic {
+    display: inline-flex; align-items: center; gap: 5px;
+    margin-top: 8px; font-family: 'Cinzel', serif; font-size: 9px;
+    letter-spacing: 0.12em; text-transform: uppercase; color: var(--accent2);
+    background: none; border: 1px solid var(--accent2); padding: 4px 10px;
+    cursor: pointer; transition: background 0.15s;
+  }
+  .btn-add-topic:hover { background: var(--parchment-dark); }
+  .btn-remove { background: none; border: none; color: var(--muted); cursor: pointer; font-size: 12px; padding: 0 2px; line-height: 1; }
+  .btn-remove:hover { color: var(--red); }
+
+  /* NOTES */
+  .notes-area { margin-top: 20px; border-top: 1px solid var(--border); padding-top: 14px; grid-column: 1 / -1; }
+  .notes-area label { font-family: 'Cinzel', serif; font-size: 9px; letter-spacing: 0.15em; text-transform: uppercase; color: var(--muted); display: block; margin-bottom: 5px; }
+  .notes-area textarea { width: 100%; height: 60px; border: 1px solid var(--border); background: transparent; font-family: 'Crimson Pro', serif; font-size: 13px; padding: 5px 7px; resize: vertical; color: var(--ink); outline: none; }
+  .notes-area textarea:focus { border-color: var(--accent); }
+  .clarify { margin-top: 10px; font-size: 11.5px; font-style: italic; color: var(--muted); }
+  .clarify input[type=text] { display: block; width: 100%; border: none; border-bottom: 1px solid var(--border); background: transparent; font-family: 'Crimson Pro', serif; font-size: 13px; color: var(--ink); margin-top: 3px; outline: none; padding: 2px 0; }
+
+  .btn-print { display: block; margin: 18px auto 0; font-family: 'Cinzel', serif; font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--parchment); background: var(--accent); border: none; padding: 9px 26px; cursor: pointer; transition: background 0.2s; }
+  .btn-print:hover { background: var(--accent2); }
+
+  @media (max-width: 600px) {
+    .page { padding: 20px 16px; }
+    .sections-grid, .rating-grid { grid-template-columns: 1fr; }
+    .section-full { grid-column: 1; }
+    .id-grid, .id-grid.three, .id-grid.four { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <div class="header">
+    <h1>Checklist de Conforto<span>Roleplay & Jogos de Mesa</span></h1>
+  </div>
+
+  <!-- Identity Row 1 -->
+  <div class="id-grid">
+    <div class="field">
+      <label>Nome do Jogador / Jogadora</label>
+      <input class="field-line" type="text">
+    </div>
+    <div class="field">
+      <label>Nome do Personagem</label>
+      <input class="field-line" type="text">
+    </div>
+  </div>
+  <!-- Identity Row 2 -->
+  <div class="id-grid four" style="margin-bottom:14px;">
+    <div class="field">
+      <label>Mestre (GM)</label>
+      <input class="field-line" type="text" value="Ariel">
+    </div>
+    <div class="field">
+      <label>Tema</label>
+      <input class="field-line" type="text" value="Floresta Assombrada de Svalas">
+    </div>
+    <div class="field">
+      <label>Campanha</label>
+      <input class="field-line" type="text" value="Vectora">
+    </div>
+    <div class="field">
+      <label>Sistema / Edição</label>
+      <input class="field-line" type="text" value="Tormenta20 Jogo do Ano">
+    </div>
+  </div>
+  <div class="id-grid" style="margin-bottom:18px;">
+    <div class="field">
+      <label>Data / Sessão</label>
+      <input class="field-line" type="text" value="17/05/2026 — Mesa Intrusa nº 2">
+    </div>
+    <div class="field">
+      <label>Classificação pretendida</label>
+      <input class="field-line" id="classif-display" type="text" placeholder="Selecione abaixo...">
+    </div>
+  </div>
+
+  <!-- Rating picker -->
+  <div class="rating-block">
+    <div class="legend-title" style="font-family:'Cinzel',serif;font-size:9px;letter-spacing:0.15em;text-transform:uppercase;color:var(--muted);margin-bottom:6px;">Qual o estilo de mesa pretendido? Clique para selecionar:</div>
+    <div class="rating-grid">
+      <label class="rating-card" id="rc-livre">
+        <input type="radio" name="rating" value="Livre" onchange="selectRating(this)">
+        <span class="rc-label">Livre</span>
+        <span class="rc-desc">Sem violência real, sem temas adultos. Aventura leve para todos os públicos.</span>
+      </label>
+      <label class="rating-card" id="rc-12">
+        <input type="radio" name="rating" value="12+" onchange="selectRating(this)">
+        <span class="rc-label">12+</span>
+        <span class="rc-desc">Tensão narrativa e conflito. Violência leve, temas sérios tratados com cuidado. Sem gore ou sexo.</span>
+      </label>
+      <label class="rating-card" id="rc-16">
+        <input type="radio" name="rating" value="16+" onchange="selectRating(this)">
+        <span class="rc-label">16+</span>
+        <span class="rc-desc">Violência e consequências reais, temas pesados, horror leve. Romance implícito. Sem explícito.</span>
+      </label>
+      <label class="rating-card" id="rc-18">
+        <input type="radio" name="rating" value="18+" onchange="selectRating(this)">
+        <span class="rc-label">18+</span>
+        <span class="rc-desc">Conteúdo adulto amplo possível. Violência intensa, horror, sexo (se acordado). Temas tabu a negociar.</span>
+      </label>
+      <label class="rating-card" id="rc-custom">
+        <input type="radio" name="rating" value="Personalizada" onchange="selectRating(this)">
+        <span class="rc-label">Personalizada</span>
+        <span class="rc-desc">Combinação específica definida pelos itens abaixo. Use a checklist para detalhar.</span>
+      </label>
+    </div>
+  </div>
+
+  <!-- Legend -->
+  <div class="legend">
+    <div class="legend-title">Como preencher — marque o círculo que representa seu conforto com cada item:</div>
+    <div class="legend-row">
+      <div class="legend-item"><span class="dot g"></span> <strong>Verde</strong> — Confortável, pode entrar no jogo</div>
+      <div class="legend-item"><span class="dot y"></span> <strong>Amarelo</strong> — Só fora de cena / com aviso; requer conversa</div>
+      <div class="legend-item"><span class="dot r"></span> <strong>Vermelho</strong> — Limite firme, não incluir</div>
+      <div class="legend-item"><span class="dot empty-g" style="border-color:#999;"></span> Deixe em branco se o item não se aplica</div>
+    </div>
+  </div>
+
+  <!-- Main grid -->
+  <div class="sections-grid">
+
+    <!-- COL 1 -->
+    <div>
+      <div class="section">
+        <div class="section-title">Saúde Mental</div>
+        <div class="subsection-title">Abuso e manipulação</div>
+        <div class="item"><span class="item-label">Gaslighting / manipulação psicológica</span><div class="dots-row"><input type="radio" name="gaslighting" class="check-dot g"><input type="radio" name="gaslighting" class="check-dot y"><input type="radio" name="gaslighting" class="check-dot r"></div></div>
+        <div class="item"><span class="item-label">Internação / aprisionamento psiquiátrico</span><div class="dots-row"><input type="radio" name="internacao" class="check-dot g"><input type="radio" name="internacao" class="check-dot y"><input type="radio" name="internacao" class="check-dot r"></div></div>
+        <div class="item"><span class="item-label">Trivialização de doenças mentais</span><div class="dots-row"><input type="radio" name="trivial" class="check-dot g"><input type="radio" name="trivial" class="check-dot y"><input type="radio" name="trivial" class="check-dot r"></div></div>
+        <div class="subsection-title">Temas internos / pessoais</div>
+        <div class="item"><span class="item-label">Luto / perda de ente querido</span><div class="dots-row"><input type="radio" name="luto" class="check-dot g"><input type="radio" name="luto" class="check-dot y"><input type="radio" name="luto" class="check-dot r"></div></div>
+        <div class="item"><span class="item-label">Abuso de substâncias / dependência</span><div class="dots-row"><input type="radio" name="substancias" class="check-dot g"><input type="radio" name="substancias" class="check-dot y"><input type="radio" name="substancias" class="check-dot r"></div></div>
+        <div class="item"><span class="item-label">Automutilação</span><div class="dots-row"><input type="radio" name="automutilacao" class="check-dot g"><input type="radio" name="automutilacao" class="check-dot y"><input type="radio" name="automutilacao" class="check-dot r"></div></div>
+        <div class="item"><span class="item-label">Suicídio</span><div class="dots-row"><input type="radio" name="suicidio" class="check-dot g"><input type="radio" name="suicidio" class="check-dot y"><input type="radio" name="suicidio" class="check-dot r"></div></div>
+        <div class="item"><span class="item-label">Transtornos alimentares</span><div class="dots-row"><input type="radio" name="alimentares" class="check-dot g"><input type="radio" name="alimentares" class="check-dot y"><input type="radio" name="alimentares" class="check-dot r"></div></div>
+        <div class="item"><span class="item-label">Depressão / ansiedade severa</span><div class="dots-row"><input type="radio" name="depressao" class="check-dot g"><input type="radio" name="depressao" class="check-dot y"><input type="radio" name="depressao" class="check-dot r"></div></div>
+        <div class="item"><span class="item-label">Depressão pós-parto</span><div class="dots-row"><input type="radio" name="dpp" class="check-dot g"><input type="radio" name="dpp" class="check-dot y"><input type="radio" name="dpp" class="check-dot r"></div></div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">Exclusão & Discriminação</div>
+        <div class="item"><span class="item-label">Perseguição religiosa / caça às bruxas</span><div class="dots-row"><input type="radio" name="bruxas" class="check-dot g"><input type="radio" name="bruxas" class="check-dot y"><input type="radio" name="bruxas" class="check-dot r"></div></div>
+        <div class="item"><span class="item-label">Sexismo / misoginia</span><div class="dots-row"><input type="radio" name="sexismo" class="check-dot g"><input type="radio" name="sexismo" class="check-dot y"><input type="radio" name="sexismo" class="check-dot r"></div></div>
+        <div class="item"><span class="item-label">Gordofobia / discriminação corporal</span><div class="dots-row"><input type="radio" name="gordofobia" class="check-dot g"><input type="radio" name="gordofobia" class="check-dot y"><input type="radio" name="gordofobia" class="check-dot r"></div></div>
+        <div class="item"><span class="item-label">Bullying / xingamentos explícitos</span><div class="dots-row"><input type="radio" name="bullying" class="check-dot g"><input type="radio" name="bullying" class="check-dot y"><input type="radio" name="bullying" class="check-dot r"></div></div>
+        <div class="item"><span class="item-label">Slurs raciais</span><div class="dots-row"><input type="radio" name="slurs" class="check-dot g"><input type="radio" name="slurs" class="check-dot y"><input type="radio" name="slurs" class="check-dot r"></div></div>
+        <div class="item"><span class="item-label">Racismo / perfilamento racial</span><div class="dots-row"><input type="radio" name="racismo" class="check-dot g"><input type="radio" name="racismo" class="check-dot y"><input type="radio" name="racismo" class="check-dot r"></div></div>
+        <div class="item"><span class="item-label">Discurso de raça superior / supremacia</span><div class="dots-row"><input type="radio" name="supremacia" class="check-dot g"><input type="radio" name="supremacia" class="check-dot y"><input type="radio" name="supremacia" class="check-dot r"></div></div>
+        <div class="item"><span class="item-label">Genocídio / campos de concentração</span><div class="dots-row"><input type="radio" name="genocidio" class="check-dot g"><input type="radio" name="genocidio" class="check-dot y"><input type="radio" name="genocidio" class="check-dot r"></div></div>
+        <div class="item"><span class="item-label">Questões culturais específicas</span><div class="dots-row"><input type="radio" name="cultura" class="check-dot g"><input type="radio" name="cultura" class="check-dot y"><input type="radio" name="cultura" class="check-dot r"></div></div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">Identidade & LGBT+</div>
+        <div class="item"><span class="item-label">Homofobia / transfobia</span><div class="dots-row"><input type="radio" name="homofobia" class="check-dot g"><input type="radio" name="homofobia" class="check-dot y"><input type="radio" name="homofobia" class="check-dot r"></div></div>
+        <div class="item"><span class="item-label">Misgendering deliberado</span><div class="dots-row"><input type="radio" name="misgendering" class="check-dot g"><input type="radio" name="misgendering" class="check-dot y"><input type="radio" name="misgendering" class="check-dot r"></div></div>
+        <div class="item"><span class="item-label">Outing forçado do personagem</span><div class="dots-row"><input type="radio" name="outing" class="check-dot g"><input type="radio" name="outing" class="check-dot y"><input type="radio" name="outing" class="check-dot r"></div></div>
+        <div class="item"><span class="item-label">Religião real em conflito com o cenário</span><div class="dots-row"><input type="radio" name="religiao" class="check-dot g"><input type="radio" name="religiao" class="check-dot y"><input type="radio" name="religiao" class="check-dot r"></div></div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">Romance & Relacionamentos</div>
+        <div class="subsection-title">Romance</div>
+        <div class="item"><span class="item-label">Fade to black <small>antes de detalhes explícitos</small></span><div class="dots-row"><input type="radio" name="rom-ftb" class="check-dot g"><input type="radio" name="rom-ftb" class="check-dot y"><input type="radio" name="rom-ftb" class="check-dot r"></div></div>
+        <div class="item"><span class="item-label">Explícito em cena</span><div class="dots-row"><input type="radio" name="rom-exp" class="check-dot g"><input type="radio" name="rom-exp" class="check-dot y"><input type="radio" name="rom-exp" class="check-dot r"></div></div>
+        <div class="item"><span class="item-label">Entre PCs e NPCs</span><div class="dots-row"><input type="radio" name="rom-npc" class="check-dot g"><input type="radio" name="rom-npc" class="check-dot y"><input type="radio" name="rom-npc" class="check-dot r"></div></div>
+        <div class="item"><span class="item-label">Entre PCs</span><div class="dots-row"><input type="radio" name="rom-pc" class="check-dot g"><input type="radio" name="rom-pc" class="check-dot y"><input type="radio" name="rom-pc" class="check-dot r"></div></div>
+        <div class="subsection-title">Sexo</div>
+        <div class="item"><span class="item-label">Fade to black</span><div class="dots-row"><input type="radio" name="sex-ftb" class="check-dot g"><input type="radio" name="sex-ftb" class="check-dot y"><input type="radio" name="sex-ftb" class="check-dot r"></div></div>
+        <div class="item"><span class="item-label">Explícito em cena</span><div class="dots-row"><input type="radio" name="sex-exp" class="check-dot g"><input type="radio" name="sex-exp" class="check-dot y"><input type="radio" name="sex-exp" class="check-dot r"></div></div>
+        <div class="item"><span class="item-label">Entre PCs e NPCs</span><div class="dots-row"><input type="radio" name="sex-npc" class="check-dot g"><input type="radio" name="sex-npc" class="check-dot y"><input type="radio" name="sex-npc" class="check-dot r"></div></div>
+        <div class="item"><span class="item-label">Entre PCs</span><div class="dots-row"><input type="radio" name="sex-pc" class="check-dot g"><input type="radio" name="sex-pc" class="check-dot y"><input type="radio" name="sex-pc" class="check-dot r"></div></div>
+        <div class="item"><span class="item-label">Traição / infidelidade</span><div class="dots-row"><input type="radio" name="traicao" class="check-dot g"><input type="radio" name="traicao" class="check-dot y"><input type="radio" name="traicao" class="check-dot r"></div></div>
+        <div class="item"><span class="item-label">Casamento forçado</span><div class="dots-row"><input type="radio" name="casamento" class="check-dot g"><input type="radio" name="casamento" class="check-dot y"><input type="radio" name="casamento" class="check-dot r"></div></div>
+        <div class="item"><span class="item-label">Gravidez do personagem</span><div class="dots-row"><input type="radio" name="gravidez-pc" class="check-dot g"><input type="radio" name="gravidez-pc" class="check-dot y"><input type="radio" name="gravidez-pc" class="check-dot r"></div></div>
+      </div>
+    </div>
+
+    <!-- COL 2 -->
+    <div>
+      <div class="section">
+        <div class="section-title">Saúde Física</div>
+        <div class="subsection-title">Condições e limitações</div>
+        <div class="item"><span class="item-label">Doença crônica / terminal <small>câncer, asma, etc.</small></span><div class="dots-row"><input type="radio" name="doenca" class="check-dot g"><input type="radio" name="doenca" class="check-dot y"><input type="radio" name="doenca" class="check-dot r"></div></div>
+        <div class="item"><span class="item-label">Epilepsia / convulsões</span><div class="dots-row"><input type="radio" name="convulsao" class="check-dot g"><input type="radio" name="convulsao" class="check-dot y"><input type="radio" name="convulsao" class="check-dot r"></div></div>
+        <div class="item"><span class="item-label">Deficiência física</span><div class="dots-row"><input type="radio" name="deficiencia" class="check-dot g"><input type="radio" name="deficiencia" class="check-dot y"><input type="radio" name="deficiencia" class="check-dot r"></div></div>
+        <div class="item"><span class="item-label">Descrições médicas detalhadas</span><div class="dots-row"><input type="radio" name="medico" class="check-dot g"><input type="radio" name="medico" class="check-dot y"><input type="radio" name="medico" class="check-dot r"></div></div>
+        <div class="subsection-title">Medos físicos</div>
+        <div class="item"><span class="item-label">Claustrofobia</span><div class="dots-row"><input type="radio" name="claustro" class="check-dot g"><input type="radio" name="claustro" class="check-dot y"><input type="radio" name="claustro" class="check-dot r"></div></div>
+        <div class="item"><span class="item-label">Contenção / paralisia física</span><div class="dots-row"><input type="radio" name="contencao" class="check-dot g"><input type="radio" name="contencao" class="check-dot y"><input type="radio" name="contencao" class="check-dot r"></div></div>
+        <div class="item"><span class="item-label">Fome / inanição extrema</span><div class="dots-row"><input type="radio" name="fome" class="check-dot g"><input type="radio" name="fome" class="check-dot y"><input type="radio" name="fome" class="check-dot r"></div></div>
+        <div class="item"><span class="item-label">Fluidos corporais <small>vômito, fezes, urina</small></span><div class="dots-row"><input type="radio" name="fluidos" class="check-dot g"><input type="radio" name="fluidos" class="check-dot y"><input type="radio" name="fluidos" class="check-dot r"></div></div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">Violência & Conflito</div>
+        <div class="subsection-title">Violência geral</div>
+        <div class="item"><span class="item-label">Sangue / gore</span><div class="dots-row"><input type="radio" name="gore" class="check-dot g"><input type="radio" name="gore" class="check-dot y"><input type="radio" name="gore" class="check-dot r"></div></div>
+        <div class="item"><span class="item-label">Tortura</span><div class="dots-row"><input type="radio" name="tortura" class="check-dot g"><input type="radio" name="tortura" class="check-dot y"><input type="radio" name="tortura" class="check-dot r"></div></div>
+        <div class="item"><span class="item-label">Mutilação / amputação</span><div class="dots-row"><input type="radio" name="mutilacao" class="check-dot g"><input type="radio" name="mutilacao" class="check-dot y"><input type="radio" name="mutilacao" class="check-dot r"></div></div>
+        <div class="item"><span class="item-label">Mutilação de cadáveres</span><div class="dots-row"><input type="radio" name="cadaver" class="check-dot g"><input type="radio" name="cadaver" class="check-dot y"><input type="radio" name="cadaver" class="check-dot r"></div></div>
+        <div class="item"><span class="item-label">Terrorismo</span><div class="dots-row"><input type="radio" name="terrorismo" class="check-dot g"><input type="radio" name="terrorismo" class="check-dot y"><input type="radio" name="terrorismo" class="check-dot r"></div></div>
+        <div class="item"><span class="item-label">Conflito armado / guerra</span><div class="dots-row"><input type="radio" name="guerra" class="check-dot g"><input type="radio" name="guerra" class="check-dot y"><input type="radio" name="guerra" class="check-dot r"></div></div>
+        <div class="item"><span class="item-label">Enforcamento / execução</span><div class="dots-row"><input type="radio" name="enforcamento" class="check-dot g"><input type="radio" name="enforcamento" class="check-dot y"><input type="radio" name="enforcamento" class="check-dot r"></div></div>
+        <div class="item"><span class="item-label">Queimado na fogueira</span><div class="dots-row"><input type="radio" name="fogueira" class="check-dot g"><input type="radio" name="fogueira" class="check-dot y"><input type="radio" name="fogueira" class="check-dot r"></div></div>
+        <div class="item"><span class="item-label">Escravidão / tráfico humano</span><div class="dots-row"><input type="radio" name="trafico" class="check-dot g"><input type="radio" name="trafico" class="check-dot y"><input type="radio" name="trafico" class="check-dot r"></div></div>
+        <div class="item"><span class="item-label">Sequestro / cárcere privado</span><div class="dots-row"><input type="radio" name="sequestro" class="check-dot g"><input type="radio" name="sequestro" class="check-dot y"><input type="radio" name="sequestro" class="check-dot r"></div></div>
+        <div class="item"><span class="item-label">Canibalismo</span><div class="dots-row"><input type="radio" name="canibalismo" class="check-dot g"><input type="radio" name="canibalismo" class="check-dot y"><input type="radio" name="canibalismo" class="check-dot r"></div></div>
+        <div class="subsection-title">Violência contra vulneráveis</div>
+        <div class="item"><span class="item-label">Abuso doméstico / violência de gênero</span><div class="dots-row"><input type="radio" name="domestica" class="check-dot g"><input type="radio" name="domestica" class="check-dot y"><input type="radio" name="domestica" class="check-dot r"></div></div>
+        <div class="item"><span class="item-label">Abuso / morte de crianças</span><div class="dots-row"><input type="radio" name="criancas" class="check-dot g"><input type="radio" name="criancas" class="check-dot y"><input type="radio" name="criancas" class="check-dot r"></div></div>
+        <div class="item"><span class="item-label">Abandono de criança</span><div class="dots-row"><input type="radio" name="abandono" class="check-dot g"><input type="radio" name="abandono" class="check-dot y"><input type="radio" name="abandono" class="check-dot r"></div></div>
+        <div class="item"><span class="item-label">Crueldade / morte de animais</span><div class="dots-row"><input type="radio" name="animais" class="check-dot g"><input type="radio" name="animais" class="check-dot y"><input type="radio" name="animais" class="check-dot r"></div></div>
+        <div class="item"><span class="item-label">Violência policial / institucional</span><div class="dots-row"><input type="radio" name="policial" class="check-dot g"><input type="radio" name="policial" class="check-dot y"><input type="radio" name="policial" class="check-dot r"></div></div>
+      </div>
+
+      <div class="section">
+        <div class="section-title">Conteúdo Sexual Sensível</div>
+        <div class="item"><span class="item-label">Gravidez, aborto espontâneo, aborto</span><div class="dots-row"><input type="radio" name="aborto" class="check-dot g"><input type="radio" name="aborto" class="check-dot y"><input type="radio" name="aborto" class="check-dot r"></div></div>
+        <div class="item"><span class="item-label">Aborto forçado</span><div class="dots-row"><input type="radio" name="aborto-f" class="check-dot g"><input type="radio" name="aborto-f" class="check-dot y"><input type="radio" name="aborto-f" class="check-dot r"></div></div>
+        <div class="item"><span class="item-label">Estupro / violência sexual</span><div class="dots-row"><input type="radio" name="estupro" class="check-dot g"><input type="radio" name="estupro" class="check-dot y"><input type="radio" name="estupro" class="check-dot r"></div></div>
+        <div class="item"><span class="item-label">Culpabilização da vítima</span><div class="dots-row"><input type="radio" name="culpa" class="check-dot g"><input type="radio" name="culpa" class="check-dot y"><input type="radio" name="culpa" class="check-dot r"></div></div>
+        <div class="item"><span class="item-label">Escravidão sexual</span><div class="dots-row"><input type="radio" name="escravidao-sex" class="check-dot g"><input type="radio" name="escravidao-sex" class="check-dot y"><input type="radio" name="escravidao-sex" class="check-dot r"></div></div>
+        <div class="item"><span class="item-label">Incesto</span><div class="dots-row"><input type="radio" name="incesto" class="check-dot g"><input type="radio" name="incesto" class="check-dot y"><input type="radio" name="incesto" class="check-dot r"></div></div>
+      </div>
+    </div>
+
+    <!-- FULL WIDTH -->
+    <div class="section section-full">
+      <div class="section-title">Horror & Elementos Sobrenaturais</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:0 32px;">
+        <div>
+          <div class="item"><span class="item-label">Insetos / pragas</span><div class="dots-row"><input type="radio" name="insetos" class="check-dot g"><input type="radio" name="insetos" class="check-dot y"><input type="radio" name="insetos" class="check-dot r"></div></div>
+          <div class="item"><span class="item-label">Aranhas</span><div class="dots-row"><input type="radio" name="aranhas" class="check-dot g"><input type="radio" name="aranhas" class="check-dot y"><input type="radio" name="aranhas" class="check-dot r"></div></div>
+          <div class="item"><span class="item-label">Ratos / roedores</span><div class="dots-row"><input type="radio" name="ratos" class="check-dot g"><input type="radio" name="ratos" class="check-dot y"><input type="radio" name="ratos" class="check-dot r"></div></div>
+          <div class="item"><span class="item-label">Demônios / possessão</span><div class="dots-row"><input type="radio" name="demonios" class="check-dot g"><input type="radio" name="demonios" class="check-dot y"><input type="radio" name="demonios" class="check-dot r"></div></div>
+          <div class="item"><span class="item-label">Corpo-horror / transformação grotesca</span><div class="dots-row"><input type="radio" name="corporeo" class="check-dot g"><input type="radio" name="corporeo" class="check-dot y"><input type="radio" name="corporeo" class="check-dot r"></div></div>
+        </div>
+        <div>
+          <div class="item"><span class="item-label">Catástrofes naturais <small>furacões, tornados, etc.</small></span><div class="dots-row"><input type="radio" name="catastrofe" class="check-dot g"><input type="radio" name="catastrofe" class="check-dot y"><input type="radio" name="catastrofe" class="check-dot r"></div></div>
+          <div class="item"><span class="item-label">Drogas / drogagem involuntária</span><div class="dots-row"><input type="radio" name="drogas" class="check-dot g"><input type="radio" name="drogas" class="check-dot y"><input type="radio" name="drogas" class="check-dot r"></div></div>
+          <div class="item"><span class="item-label">Olhos / globos oculares expostos</span><div class="dots-row"><input type="radio" name="olhos" class="check-dot g"><input type="radio" name="olhos" class="check-dot y"><input type="radio" name="olhos" class="check-dot r"></div></div>
+          <div class="item"><span class="item-label">Morte de bebê / natimorto</span><div class="dots-row"><input type="radio" name="bebe" class="check-dot g"><input type="radio" name="bebe" class="check-dot y"><input type="radio" name="bebe" class="check-dot r"></div></div>
+          <div class="item"><span class="item-label">Consumo de álcool por menores</span><div class="dots-row"><input type="radio" name="menor-alc" class="check-dot g"><input type="radio" name="menor-alc" class="check-dot y"><input type="radio" name="menor-alc" class="check-dot r"></div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section section-full">
+      <div class="section-title">Mecânicas & Narrativa</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:0 32px;">
+        <div>
+          <div class="item"><span class="item-label">PvP (jogador vs. jogador)</span><div class="dots-row"><input type="radio" name="pvp" class="check-dot g"><input type="radio" name="pvp" class="check-dot y"><input type="radio" name="pvp" class="check-dot r"></div></div>
+          <div class="item"><span class="item-label">Morte permanente de personagem</span><div class="dots-row"><input type="radio" name="morte-pc" class="check-dot g"><input type="radio" name="morte-pc" class="check-dot y"><input type="radio" name="morte-pc" class="check-dot r"></div></div>
+          <div class="item"><span class="item-label">Traição entre PCs</span><div class="dots-row"><input type="radio" name="traicao-pc" class="check-dot g"><input type="radio" name="traicao-pc" class="check-dot y"><input type="radio" name="traicao-pc" class="check-dot r"></div></div>
+          <div class="item"><span class="item-label">Controle mental / possessão do personagem</span><div class="dots-row"><input type="radio" name="controle" class="check-dot g"><input type="radio" name="controle" class="check-dot y"><input type="radio" name="controle" class="check-dot r"></div></div>
+        </div>
+        <div>
+          <div class="item"><span class="item-label">Flashbacks traumáticos de personagem</span><div class="dots-row"><input type="radio" name="flashback" class="check-dot g"><input type="radio" name="flashback" class="check-dot y"><input type="radio" name="flashback" class="check-dot r"></div></div>
+          <div class="item"><span class="item-label">Gatilho de memória (eventos do passado do PC)</span><div class="dots-row"><input type="radio" name="gatilho" class="check-dot g"><input type="radio" name="gatilho" class="check-dot y"><input type="radio" name="gatilho" class="check-dot r"></div></div>
+          <div class="item"><span class="item-label">Vilão carismático / cenas do ponto de vista do antagonista</span><div class="dots-row"><input type="radio" name="vilao" class="check-dot g"><input type="radio" name="vilao" class="check-dot y"><input type="radio" name="vilao" class="check-dot r"></div></div>
+          <div class="item"><span class="item-label">Finais trágicos / sem happy ending</span><div class="dots-row"><input type="radio" name="tragico" class="check-dot g"><input type="radio" name="tragico" class="check-dot y"><input type="radio" name="tragico" class="check-dot r"></div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- EXTRA TOPICS -->
+    <div class="section section-full">
+      <div class="section-title">Tópicos Adicionais <span style="font-weight:300;font-style:italic;font-size:10px;">— escreva o que não está na lista acima</span></div>
+      <div class="extra-list" id="extra-list">
+        <!-- populated by JS -->
+      </div>
+      <button class="btn-add-topic no-print" onclick="addExtraRow()">+ Adicionar tópico</button>
+    </div>
+
+    <!-- NOTES -->
+    <div class="notes-area">
+      <label>Observações, contexto pessoal ou limites que o GM deve saber</label>
+      <textarea placeholder="Escreva livremente aqui..."></textarea>
+      <div class="clarify">
+        <strong>Gostaria que o GM conversasse sobre algum item antes da sessão?</strong> Se sim, quais?
+        <input type="text" placeholder="Escreva os tópicos aqui...">
+      </div>
+      <div class="clarify" style="margin-top:10px;">
+        <strong>Prefere usar alguma ferramenta de segurança durante o jogo?</strong> <span style="font-size:10.5px;">(ex: X-Card, Lines & Veils, Pause, Debrief)</span>
+        <input type="text" placeholder="Marque sua preferência ou escreva outra...">
+      </div>
+    </div>
+
+  </div><!-- end sections-grid -->
+</div><!-- end page -->
+
+<button class="btn-print no-print" onclick="window.print()">🖨 Imprimir / Salvar PDF</button>
+
+<script>
+  let extraCount = 0;
+
+  function addExtraRow(label) {
+    extraCount++;
+    const name = 'extra' + extraCount;
+    const list = document.getElementById('extra-list');
+    const row = document.createElement('div');
+    row.className = 'extra-item';
+    row.id = 'extra-row-' + extraCount;
+    row.innerHTML = `
+      <input type="text" placeholder="Descreva o tópico..." value="${label || ''}">
+      <div class="dots-row">
+        <input type="radio" name="${name}" class="check-dot g">
+        <input type="radio" name="${name}" class="check-dot y">
+        <input type="radio" name="${name}" class="check-dot r">
+      </div>
+      <button class="btn-remove no-print" onclick="removeExtraRow('extra-row-${extraCount}')" title="Remover">✕</button>
+    `;
+    list.appendChild(row);
+  }
+
+  function removeExtraRow(id) {
+    const el = document.getElementById(id);
+    if (el) el.remove();
+  }
+
+  function selectRating(radio) {
+    document.querySelectorAll('.rating-card').forEach(c => c.classList.remove('selected'));
+    radio.closest('.rating-card').classList.add('selected');
+    document.getElementById('classif-display').value = radio.value;
+  }
+
+  // Start with 2 blank extra rows
+  addExtraRow();
+  addExtraRow();
+</script>
+</body>
+</html>
